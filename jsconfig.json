@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/app/*": ["./src/app/*"], 
+      "@/components/*": ["./src/app/components/*"],
+      "@lib/*": ["src/lib/*"]
     }
-  }
+  },
+  "include": ["next-env.d.ts", "**/*.js", "**/*.jsx", "postcss.config.mjs"],
+  "exclude": ["node_modules"]
 }
