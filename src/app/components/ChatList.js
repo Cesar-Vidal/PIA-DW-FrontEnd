@@ -3,7 +3,6 @@
 
 import React from 'react';
 
-// Ahora no usa useRouter internamente, lo recibe de quien lo usa
 export default function ChatList({ userChats, selectedChatId, setSelectedChatId, currentUser }) {
 
   const getChatDisplayName = (chat) => {
@@ -12,17 +11,13 @@ export default function ChatList({ userChats, selectedChatId, setSelectedChatId,
     }
     const otherMembers = chat.members.filter(memberId => memberId !== currentUser.uid);
     if (otherMembers.length > 0) {
-      // Necesitarías una forma de obtener el displayName de los otros UIDs.
-      // Aquí asumo que si es un chat 1-a-1, puedes mostrar el ID truncado o buscar el nombre.
-      // Para una solución robusta, deberías tener un mapa de UIDs a displayNames en tu contexto o pasar una lista de amigos.
       return `Chat con ${otherMembers.length > 1 ? `${otherMembers.length} personas` : `Usuario ${otherMembers[0].substring(0, 4)}...`}`;
     }
     return 'Chat Sin Nombre';
   };
 
   return (
-    <div className="flex flex-col space-y-2"> {/* quitamos el 'h-full' y el 'mb-6' de h2 */}
-      {/* ELIMINADO: h2 "Tus Chats" y botón "Crear Nuevo Chat" - ahora en la página /chats */}
+    <div className="flex flex-col space-y-2"> 
       
       {userChats.length === 0 ? (
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm py-4">
@@ -32,7 +27,7 @@ export default function ChatList({ userChats, selectedChatId, setSelectedChatId,
         userChats.map((chat) => (
           <button
             key={chat.id}
-            onClick={() => setSelectedChatId(chat.id)} // Llama a la función proporcionada por el padre
+            onClick={() => setSelectedChatId(chat.id)} 
             className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between
               ${selectedChatId === chat.id
                 ? 'bg-blue-200 dark:bg-blue-700 shadow-md transform scale-[1.01] text-blue-800 dark:text-blue-100 border border-blue-300 dark:border-blue-600'

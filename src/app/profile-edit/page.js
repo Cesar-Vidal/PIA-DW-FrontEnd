@@ -106,10 +106,9 @@ export default function ProfileEditPage() {
           {error && <p className="text-red-500 text-sm italic bg-red-100 p-2 rounded-md dark:bg-red-900 dark:text-red-200">{error}</p>} 
           {success && <p className="text-green-500 text-sm italic bg-green-100 p-2 rounded-md dark:bg-green-900 dark:text-green-200">¡Perfil actualizado con éxito!</p>} 
 
-          {/* Botón Guardar Cambios */}
           <button
             type="submit"
-            disabled={saving} // Deshabilita el botón mientras se guarda
+            disabled={saving}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 shadow-md
                        disabled:bg-blue-300 disabled:cursor-not-allowed
                        dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-gray-100 dark:disabled:bg-blue-900" 

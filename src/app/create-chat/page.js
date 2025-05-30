@@ -19,7 +19,7 @@ import { useChat } from '../context/ChatContext';
 
 export default function CreateChatPage() {
   const [chatName, setChatName] = useState('');
-  const [chatColor, setChatColor] = useState('#2563eb'); // Cambiado el valor por defecto para que coincida con el primer color de la lista
+  const [chatColor, setChatColor] = useState('#2563eb');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
@@ -28,22 +28,21 @@ export default function CreateChatPage() {
   const router = useRouter();
   const { setSelectedChatId } = useChat();
 
-  // Define los 14 colores predefinidos (2 filas de 7)
   const predefinedColors = [
-    '#2563eb', // blue-600 (azul)
-    '#dc2626', // red-600 (rojo)
-    '#16a34a', // green-600 (verde)
-    '#eab308', // yellow-500 (amarillo)
-    '#9333ea', // purple-600 (púrpura)
-    '#ea580c', // orange-600 (naranja)
-    '#0ea5e9', // sky-500 (azul cielo)
-    '#f43f5e', // rose-500 (rosa fuerte)
-    '#be185d', // pink-700 (rosa oscuro)
-    '#7c2d12', // amber-800 (marrón-rojizo)
-    '#6d28d9', // violet-700 (violeta más oscuro)
-    '#0f766e', // teal-700 (verde azulado)
-    '#1e40af', // blue-800 (azul más oscuro)
-    '#a21caf', // fuchsia-700 (fucsia)
+    '#2563eb',
+    '#dc2626',
+    '#16a34a',
+    '#eab308',
+    '#9333ea',
+    '#ea580c',
+    '#0ea5e9',
+    '#f43f5e',
+    '#be185d',
+    '#7c2d12',
+    '#6d28d9',
+    '#0f766e',
+    '#1e40af',
+    '#a21caf', 
   ];
 
 
@@ -121,7 +120,7 @@ export default function CreateChatPage() {
 
       const newChatRef = await addDoc(collection(db, 'chats'), {
         name: chatName,
-        color: chatColor, // Usamos el color seleccionado de los predefinidos
+        color: chatColor,
         createdAt: serverTimestamp(),
         createdBy: currentUser.uid,
         members: Array.from(new Set(initialMembersUids)),
@@ -136,7 +135,7 @@ export default function CreateChatPage() {
 
       console.log('Chat creado con ID: ', newChatRef.id);
       setSelectedChatId(newChatRef.id);
-      router.push('/home'); // Al crear un chat, te lleva a la vista de ese chat
+      router.push('/home');
     } catch (err) {
       console.error('Error creating chat:', err);
       setError('Error al crear el chat. Inténtalo de nuevo.');
@@ -176,7 +175,6 @@ export default function CreateChatPage() {
             <label className="block text-lg font-medium text-gray-700 mb-2 dark:text-gray-200">
               Color del Chat:
             </label>
-            {/* Ajusta la clase 'grid' para controlar el número de columnas */}
             <div className="grid grid-cols-7 gap-3 p-2 border border-blue-300 rounded-lg dark:border-gray-600 bg-blue-50 dark:bg-gray-700">
               {predefinedColors.map((color) => (
                 <button

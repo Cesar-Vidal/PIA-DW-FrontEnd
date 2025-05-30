@@ -5,8 +5,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@lib/firebase';
-// ELIMINAR: useChat ya no es necesario aquí para la lista de chats
-// ELIMINAR: ChatList ya no se renderiza aquí
 
 export default function HamburgerMenu({ currentUser }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +65,7 @@ export default function HamburgerMenu({ currentUser }) {
           </div>
 
           <nav className="flex flex-col p-2 space-y-1">
-            {/* NUEVO: Botón para navegar a la página de chats */}
+
             <button
               onClick={() => handleNavigation('/chats')}
               className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-150 flex items-center"
@@ -97,10 +95,7 @@ export default function HamburgerMenu({ currentUser }) {
               </svg>
               Agregar Amigos
             </button>
-            {/* ELIMINADO: Botón 'Crear Nuevo Chat' de aquí - ahora está en /chats */}
-            {/* ELIMINADO: Botón 'Editar Chat Actual' de aquí - ahora está en ChatScreen */}
 
-            {/* Separador */}
             <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
             <button

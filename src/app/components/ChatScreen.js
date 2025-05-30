@@ -15,7 +15,7 @@ export default function ChatScreen({ user: currentUser }) {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [error, setError] = useState(null);
 
-  const { selectedChatId, selectedChatName } = useChat(); // selectedChatColor ya no se usa aquí
+  const { selectedChatId, selectedChatName } = useChat();
 
   useEffect(() => {
     if (!selectedChatId || !currentUser) {
@@ -92,7 +92,6 @@ export default function ChatScreen({ user: currentUser }) {
         )}
       </div>
 
-      {/* Input de Mensajes */}
       {selectedChatId && (
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <MessageInput onSendMessage={handleSendMessage} />

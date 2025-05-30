@@ -12,7 +12,7 @@ export default function MessagesDisplay({ messages, currentUser }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]); // Cada vez que los mensajes cambian, haz scroll
+  }, [messages]);
 
   return (
     <div className="flex flex-col space-y-4 p-4 overflow-y-auto">
@@ -24,24 +24,23 @@ export default function MessagesDisplay({ messages, currentUser }) {
           <div
             className={`rounded-xl p-3 max-w-[70%] shadow-md ${
               msg.uid === currentUser.uid
-                ? 'bg-blue-500 text-white self-end rounded-br-none' // Tu mensaje
-                : 'bg-gray-300 text-gray-800 self-start rounded-bl-none dark:bg-gray-700 dark:text-gray-100' // Mensaje de otro
+                ? 'bg-blue-500 text-white self-end rounded-br-none' 
+                : 'bg-gray-300 text-gray-800 self-start rounded-bl-none dark:bg-gray-700 dark:text-gray-100' 
             }`}
           >
-            {/* Opcional: Mostrar nombre del remitente si no es el usuario actual */}
             {msg.uid !== currentUser.uid && msg.uid !== 'system' && (
               <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-gray-200">
                 {msg.displayName}
               </p>
             )}
-            <p className="break-words">{msg.text}</p> {/* Añadido break-words */}
+            <p className="break-words">{msg.text}</p> 
             <p className="text-xs text-right opacity-80 mt-1">
               {msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Enviando...'}
             </p>
           </div>
         </div>
       ))}
-      <div ref={messagesEndRef} /> {/* Elemento para hacer scroll al final */}
+      <div ref={messagesEndRef} /> 
     </div>
   );
 }

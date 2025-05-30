@@ -7,8 +7,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   provider,
-  upsertUserDocument // <-- NUEVA IMPORTACIÓN
-} from "@lib/firebase"; // Asegúrate de que upsertUserDocument esté exportado desde tu firebase.js
+  upsertUserDocument
+} from "@lib/firebase"; 
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
@@ -27,7 +27,7 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      await upsertUserDocument(user); // <-- LLAMADA A LA NUEVA FUNCIÓN
+      await upsertUserDocument(user); 
 
       console.log('Registration successful!');
       router.push('/home');
@@ -43,7 +43,7 @@ export default function RegisterPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      await upsertUserDocument(user); // <-- LLAMADA A LA NUEVA FUNCIÓN
+      await upsertUserDocument(user); 
 
       console.log('Google Sign-up successful:', user.email);
       router.push('/home');
@@ -54,7 +54,6 @@ export default function RegisterPage() {
   };
 
   return (
-    // ... (Tu JSX y Tailwind CSS sin cambios)
     <div className='w-full h-screen flex items-center justify-center
                      bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200
                      dark:from-gray-800 dark:via-gray-900 dark:to-black'>

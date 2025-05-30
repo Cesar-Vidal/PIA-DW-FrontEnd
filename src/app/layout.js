@@ -12,10 +12,12 @@ import HamburgerMenu from './components/HamburgerMenu';
 import { ChatProvider, useChat } from './context/ChatContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggleButton from './components/ThemeToggleButton';
+import FriendRequestsButton from './components/FriendRequestsButton'; 
 
 
 function HeaderContent({ currentUser }) {
-  const { selectedChatName, selectedChatId, selectedChatColor } = useChat();
+  const { selectedChatName, selectedChatId, selectedChatColor, setSelectedChatId, setSelectedChatName, setSelectedChatColor: setChatColorFromContext } = useChat();
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -36,24 +38,57 @@ function HeaderContent({ currentUser }) {
     headerTitle = 'Editar Chat';
   } else if (pathname === '/chats') {
     headerTitle = 'Mis Chats';
-  } else if (pathname === '/home' && !selectedChatName) {
-    headerTitle = 'Bienvenido al Chat';
+  } else if (pathname === '/home') {
+    headerTitle = selectedChatName || 'Cargando Chat...';
   }
+
 
   const headerBackgroundColor = (pathname === '/home' && selectedChatId)
     ? selectedChatColor
     : (window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1f2937' : '#2563eb');
+
+  const shouldShowBackButton = !noHeaderPaths.includes(pathname) && pathname !== '/chats';
 
   return (
     <header
       className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-[100] shadow-xl text-white"
       style={{ backgroundColor: headerBackgroundColor }}
     >
-      <h1 className="text-2xl font-bold text-blue-100 drop-shadow-md truncate dark:text-blue-300">
-        {headerTitle}
-      </h1>
       <div className="flex items-center space-x-4">
-        {/* Botón de Editar Chat - MEJORADO */}
+        {shouldShowBackButton && (
+          <button
+            onClick={() => {
+              setSelectedChatId(null);
+              setSelectedChatName(null);
+              setChatColorFromContext(null);
+              router.push('/chats');
+            }}
+            className="
+              flex items-center justify-center
+              w-10 h-10 rounded-full
+              bg-white bg-opacity-20 hover:bg-opacity-30
+              text-white
+              dark:bg-gray-700 dark:hover:bg-gray-600
+              dark:text-gray-200
+              focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2
+              dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800
+              transition-all duration-200 ease-in-out
+              shadow-sm hover:shadow-md
+              active:scale-95
+            "
+            aria-label="Volver a Mis Chats"
+            title="Volver a Mis Chats"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+          </button>
+        )}
+        <h1 className="text-2xl font-bold text-blue-100 drop-shadow-md truncate dark:text-blue-300">
+          {headerTitle}
+        </h1>
+      </div>
+      <div className="flex items-center space-x-4">
         {pathname === '/home' && selectedChatId && (
           <button
             onClick={() => router.push(`/edit-chat?id=${selectedChatId}`)}
@@ -89,6 +124,7 @@ function HeaderContent({ currentUser }) {
             </svg>
           </button>
         )}
+        <FriendRequestsButton currentUser={currentUser} />
         <ThemeToggleButton />
         <HamburgerMenu currentUser={currentUser} />
       </div>

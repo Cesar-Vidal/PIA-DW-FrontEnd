@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // Asegúrate de que Link esté importado
+import Link from 'next/link';
 import {
   db,
   auth,
@@ -64,7 +64,6 @@ useEffect(() => {
 
         const friendDataPromises = allFriendsData.map(async (friend) => {
             try {
-                // --- CAMBIO AQUÍ ---
                 const friendUserDocRef = doc(db, 'users', friend.id);
                 const friendUserDocSnap = await getDoc(friendUserDocRef);
 

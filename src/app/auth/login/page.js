@@ -7,8 +7,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   provider,
-  upsertUserDocument // <-- NUEVA IMPORTACIÓN
-} from "@lib/firebase"; // Asegúrate de que upsertUserDocument esté exportado desde tu firebase.js
+  upsertUserDocument 
+} from "@lib/firebase";
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -24,12 +24,7 @@ export default function LoginPage() {
       return;
     }
     try {
-      // Solo autentica al usuario existente
       await signInWithEmailAndPassword(auth, email, password);
-      // No es necesario llamar a upsertUserDocument aquí, ya que el usuario
-      // debería tener un documento de Firestore de su registro inicial.
-      // Si quisieras actualizar lastSignInTime en el documento de Firestore en cada login,
-      // podrías llamar a upsertUserDocument(auth.currentUser); aquí.
       console.log('Login successful!');
       router.push('/home');
     } catch (err) {
@@ -42,9 +37,9 @@ export default function LoginPage() {
     setError(null);
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user; // Obtener el objeto de usuario del resultado
+      const user = result.user;
 
-      await upsertUserDocument(user); // <-- LLAMADA A LA NUEVA FUNCIÓN
+      await upsertUserDocument(user);
 
       console.log('Login successful with Google!');
       router.push('/home');
@@ -55,7 +50,6 @@ export default function LoginPage() {
   };
 
   return (
-    // ... (Tu JSX y Tailwind CSS sin cambios)
     <div className="flex w-full h-screen justify-center items-center
                      bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200
                      dark:from-gray-800 dark:via-gray-900 dark:to-black">

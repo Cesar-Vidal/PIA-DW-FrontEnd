@@ -1,16 +1,16 @@
 // src/app/edit-chat/page.js
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react'; // Importar useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   db,
   collection,
   doc,
-  getDoc, // Usaremos getDoc en lugar de onSnapshot para la carga inicial
+  getDoc,
   updateDoc,
   query,
-  onSnapshot, // Mantener onSnapshot para amigos si es necesario
+  onSnapshot,
   auth,
 } from '@lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -31,7 +31,6 @@ export default function EditChatPage() {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [initialMembers, setInitialMembers] = useState([]);
 
-  // Usaremos un ref para controlar si el chat ya se cargó inicialmente
   const chatLoadedRef = useRef(false);
 
   const { setSelectedChatId } = useChat();
@@ -41,7 +40,6 @@ export default function EditChatPage() {
     '#f43f5e', '#be185d', '#7c2d12', '#6d28d9', '#0f766e', '#1e40af', '#a21caf',
   ];
 
-  // 1. Efecto para autenticación y carga de amigos (este está bien)
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -75,9 +73,7 @@ export default function EditChatPage() {
     return () => unsubscribeAuth();
   }, [router]);
 
-  // 2. Efecto para cargar los datos del chat: usar getDoc para carga inicial, evitar re-carga
   useEffect(() => {
-    // Si ya cargamos el chat o no tenemos chatId/currentUser, salimos
     if (chatLoadedRef.current || !chatId || !currentUser) {
       if (!chatId && !loading) {
         setError('ID del chat no proporcionado.');
@@ -91,7 +87,7 @@ export default function EditChatPage() {
       setError('');
       try {
         const chatDocRef = doc(db, 'chats', chatId);
-        const docSnap = await getDoc(chatDocRef); // Usar getDoc para una sola lectura
+        const docSnap = await getDoc(chatDocRef);
 
         if (docSnap.exists()) {
           const chatData = docSnap.data();
@@ -125,8 +121,8 @@ export default function EditChatPage() {
 
           const fetchedMembers = (await Promise.all(memberDetailsPromises)).filter(Boolean);
           setSelectedMembers(fetchedMembers);
-          setInitialMembers(fetchedMembers); // Guardar miembros iniciales
-          chatLoadedRef.current = true; // Marcar que el chat ya se cargó
+          setInitialMembers(fetchedMembers);
+          chatLoadedRef.current = true; 
         } else {
           setError('Chat no encontrado.');
         }
@@ -138,15 +134,10 @@ export default function EditChatPage() {
       }
     };
 
-    // Asegurarse de que `friends` esté cargado antes de intentar cargar los miembros del chat
-    // Ya que `friends` es una dependencia, este useEffect se ejecutará cuando `friends` cambie,
-    // pero `chatLoadedRef.current` evitará la recarga si ya se hizo.
     if (currentUser && chatId && friends.length > 0 && !chatLoadedRef.current) {
         fetchChatData();
     }
-     // Si currentUser y chatId ya están, pero friends aún no se cargó, el efecto se re-ejecutará
-     // cuando friends cambie, y ahí se disparará fetchChatData.
-  }, [chatId, currentUser, friends]); // Dependencias: chatId, currentUser y friends
+  }, [chatId, currentUser, friends]); 
 
 
   const handleToggleMember = (userToToggle) => {
@@ -232,7 +223,6 @@ export default function EditChatPage() {
             />
           </div>
 
-          {/* Selector de Color con 14 opciones predefinidas */}
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2 dark:text-gray-200">
               Color del Chat:
