@@ -12,7 +12,7 @@ import HamburgerMenu from './components/HamburgerMenu';
 import { ChatProvider, useChat } from './context/ChatContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggleButton from './components/ThemeToggleButton';
-import FriendRequestsButton from './components/FriendRequestsButton'; 
+import FriendRequestsButton from './components/FriendRequestsButton';
 
 
 function HeaderContent({ currentUser }) {
@@ -54,7 +54,7 @@ function HeaderContent({ currentUser }) {
       className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-[100] shadow-xl text-white"
       style={{ backgroundColor: headerBackgroundColor }}
     >
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 flex-grow min-w-0">
         {shouldShowBackButton && (
           <button
             onClick={() => {
@@ -84,11 +84,12 @@ function HeaderContent({ currentUser }) {
             </svg>
           </button>
         )}
-        <h1 className="text-2xl font-bold text-blue-100 drop-shadow-md truncate dark:text-blue-300">
+        <h1 className="text-2xl font-bold text-blue-100 drop-shadow-md truncate dark:text-blue-300 flex-grow min-w-0">
           {headerTitle}
         </h1>
       </div>
-      <div className="flex items-center space-x-4">
+
+      <div className="flex items-center space-x-4 flex-shrink-0">
         {pathname === '/home' && selectedChatId && (
           <button
             onClick={() => router.push(`/edit-chat?id=${selectedChatId}`)}

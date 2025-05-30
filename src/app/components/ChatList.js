@@ -2,8 +2,10 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation'; // Importa useRouter para la navegación
 
 export default function ChatList({ userChats, selectedChatId, setSelectedChatId, currentUser }) {
+  const router = useRouter(); // Inicializa el router
 
   const getChatDisplayName = (chat) => {
     if (chat.name) {
@@ -16,9 +18,26 @@ export default function ChatList({ userChats, selectedChatId, setSelectedChatId,
     return 'Chat Sin Nombre';
   };
 
+  const handleCreateNewChat = () => {
+    router.push('/create-chat'); 
+  };
+
   return (
-    <div className="flex flex-col space-y-2"> 
-      
+    <div className="flex flex-col space-y-2">
+
+      <button
+        onClick={handleCreateNewChat}
+        className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center
+          bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md
+          dark:bg-blue-700 dark:hover:bg-blue-600
+        `}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6 mr-2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Crear Nuevo Chat
+      </button>
+
       {userChats.length === 0 ? (
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm py-4">
           No hay chats disponibles.
@@ -27,7 +46,7 @@ export default function ChatList({ userChats, selectedChatId, setSelectedChatId,
         userChats.map((chat) => (
           <button
             key={chat.id}
-            onClick={() => setSelectedChatId(chat.id)} 
+            onClick={() => setSelectedChatId(chat.id)}
             className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between
               ${selectedChatId === chat.id
                 ? 'bg-blue-200 dark:bg-blue-700 shadow-md transform scale-[1.01] text-blue-800 dark:text-blue-100 border border-blue-300 dark:border-blue-600'
