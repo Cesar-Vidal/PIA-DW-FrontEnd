@@ -6,8 +6,9 @@ import {
   auth,
   signInWithEmailAndPassword,
   signInWithPopup,
-  provider
-} from "@lib/firebase";
+  provider,
+  upsertUserDocument // <-- NUEVA IMPORTACIÓN
+} from "@lib/firebase"; // Asegúrate de que upsertUserDocument esté exportado desde tu firebase.js
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -23,7 +24,12 @@ export default function LoginPage() {
       return;
     }
     try {
+      // Solo autentica al usuario existente
       await signInWithEmailAndPassword(auth, email, password);
+      // No es necesario llamar a upsertUserDocument aquí, ya que el usuario
+      // debería tener un documento de Firestore de su registro inicial.
+      // Si quisieras actualizar lastSignInTime en el documento de Firestore en cada login,
+      // podrías llamar a upsertUserDocument(auth.currentUser); aquí.
       console.log('Login successful!');
       router.push('/home');
     } catch (err) {
@@ -35,7 +41,11 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setError(null);
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user; // Obtener el objeto de usuario del resultado
+
+      await upsertUserDocument(user); // <-- LLAMADA A LA NUEVA FUNCIÓN
+
       console.log('Login successful with Google!');
       router.push('/home');
     } catch (err) {
@@ -45,77 +55,69 @@ export default function LoginPage() {
   };
 
   return (
-    // Fondo de la página: Añade degradado oscuro para dark mode
+    // ... (Tu JSX y Tailwind CSS sin cambios)
     <div className="flex w-full h-screen justify-center items-center
-                    bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200
-                    dark:from-gray-800 dark:via-gray-900 dark:to-black"> {/* <--- CAMBIO AQUÍ */}
+                     bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200
+                     dark:from-gray-800 dark:via-gray-900 dark:to-black">
 
-      {/* Contenedor del formulario (la "tarjeta" principal) */}
       <div className='w-11/12 max-w-[700px] px-10 py-20 rounded-3xl
                       bg-white bg-opacity-30 backdrop-blur-md
                       border-2 border-white border-opacity-50
                       shadow-xl shadow-blue-300/50
-                      dark:bg-gray-900 dark:bg-opacity-50 dark:border-gray-700 dark:border-opacity-50 dark:shadow-purple-900/50'> {/* <--- CAMBIO AQUÍ */}
+                      dark:bg-gray-900 dark:bg-opacity-50 dark:border-gray-700 dark:border-opacity-50 dark:shadow-purple-900/50'>
 
-        {/* Título */}
         <h1 className='text-5xl font-semibold text-gray-800
-                       dark:text-white'> {/* <--- CAMBIO AQUÍ */}
+                       dark:text-white'>
           Welcome Back
         </h1>
-        {/* Párrafo descriptivo */}
         <p className='font-medium text-lg text-gray-700 mt-4
-                      dark:text-gray-300'> {/* <--- CAMBIO AQUÍ */}
+                      dark:text-gray-300'>
           Welcome back! Please enter your details.
         </p>
 
         <div className='mt-8'>
-          {/* Campo de Email */}
           <div className='flex flex-col'>
             <label className='text-lg font-medium text-gray-700
-                              dark:text-gray-200' htmlFor="email">Email</label> {/* <--- CAMBIO AQUÍ */}
+                              dark:text-gray-200' htmlFor="email">Email</label>
             <input
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className='w-full border-2 border-white border-opacity-70 rounded-xl p-4 mt-1 bg-white bg-opacity-60 placeholder-gray-500 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400
-                         dark:bg-gray-800 dark:bg-opacity-60 dark:border-gray-700 dark:border-opacity-70 dark:placeholder-gray-400 dark:text-gray-100 dark:focus:ring-purple-500' 
+                        dark:bg-gray-800 dark:bg-opacity-60 dark:border-gray-700 dark:border-opacity-70 dark:placeholder-gray-400 dark:text-gray-100 dark:focus:ring-purple-500'
               placeholder="Enter your email"
               type="email"
             />
           </div>
 
-          {/* Campo de Contraseña */}
           <div className='flex flex-col mt-4'>
             <label className='text-lg font-medium text-gray-700
-                              dark:text-gray-200' htmlFor="password">Password</label> {/* <--- CAMBIO AQUÍ */}
+                              dark:text-gray-200' htmlFor="password">Password</label>
             <input
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className='w-full border-2 border-white border-opacity-70 rounded-xl p-4 mt-1 bg-white bg-opacity-60 placeholder-gray-500 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400
-                         dark:bg-gray-800 dark:bg-opacity-60 dark:border-gray-700 dark:border-opacity-70 dark:placeholder-gray-400 dark:text-gray-100 dark:focus:ring-purple-500' 
+                        dark:bg-gray-800 dark:bg-opacity-60 dark:border-gray-700 dark:border-opacity-70 dark:placeholder-gray-400 dark:text-gray-100 dark:focus:ring-purple-500'
               placeholder="Enter your password"
               type="password"
             />
           </div>
 
           <div className='mt-8 flex flex-col gap-y-4'>
-            {/* Botón "Sign in" (gradiente) */}
             <button
               onClick={handleEmailPasswordLogin}
               className='active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-bold text-lg shadow-md hover:shadow-lg
-                         dark:from-purple-700 dark:to-indigo-600 dark:hover:from-purple-800 dark:hover:to-indigo-700' 
+                        dark:from-purple-700 dark:to-indigo-600 dark:hover:from-purple-800 dark:hover:to-indigo-700'
             >
               Sign in
             </button>
 
-            {/* Botón "Sign in with Google" */}
             <button
               onClick={handleGoogleLogin}
               className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01] ease-in-out transform py-4 rounded-xl text-gray-800 font-semibold text-lg border-2 border-white border-opacity-70 bg-white bg-opacity-60 hover:bg-opacity-80 shadow-md hover:shadow-lg
-                         dark:text-gray-200 dark:border-gray-700 dark:border-opacity-70 dark:bg-gray-800 dark:bg-opacity-60 dark:hover:bg-opacity-80' 
+                        dark:text-gray-200 dark:border-gray-700 dark:border-opacity-70 dark:bg-gray-800 dark:bg-opacity-60 dark:hover:bg-opacity-80'
             >
-              {/* SVG del logo de Google (sus colores están hardcodeados, así que no cambiarán) */}
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5.26644 9.76453C6.19903 6.93863 8.85469 4.90909 12.0002 4.90909C13.6912 4.90909 15.2184 5.50909 16.4184 6.49091L19.9093 3C17.7821 1.14545 15.0548 0 12.0002 0C7.27031 0 3.19799 2.6983 1.24023 6.65002L5.26644 9.76453Z" fill="#EA4335"/>
                 <path d="M16.0406 18.0142C14.9508 18.718 13.5659 19.0926 11.9998 19.0926C8.86633 19.0926 6.21896 17.0785 5.27682 14.2695L1.2373 17.3366C3.19263 21.2953 7.26484 24.0017 11.9998 24.0017C14.9327 24.0017 17.7352 22.959 19.834 21.0012L16.0406 18.0142Z" fill="#34A853"/>
@@ -127,14 +129,13 @@ export default function LoginPage() {
             {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
           </div>
 
-          {/* Texto "Dont have an account?" y botón "Sign up" */}
           <div className='mt-8 flex justify-center items-center'>
             <p className='font-medium text-base text-gray-700
-                          dark:text-gray-300'>Dont have an account?</p> {/* <--- CAMBIO AQUÍ */}
+                          dark:text-gray-300'>Dont have an account?</p>
             <button
               onClick={() => router.push('/auth/register')}
               className='ml-2 font-medium text-base text-blue-600 hover:text-blue-800 transition-colors duration-200
-                         dark:text-blue-400 dark:hover:text-blue-300' 
+                        dark:text-blue-400 dark:hover:text-blue-300'
             >
               Sign up
             </button>

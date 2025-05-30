@@ -48,9 +48,9 @@ export default function CreateChatPage() {
     const q = query(friendsCollectionRef);
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const friendIds = snapshot.docs
-        .filter(doc => doc.data().status === 'accepted')
-        .map(doc => doc.id);
+        const friendIds = snapshot.docs
+            .filter(doc => doc.data().status === 'accepted')
+            .map(doc => doc.id);
 
       const friendsDataPromises = friendIds.map(async (friendId) => {
         const userDocRef = doc(db, 'users', friendId);

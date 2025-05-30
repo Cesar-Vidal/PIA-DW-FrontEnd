@@ -16,7 +16,8 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
-  onSnapshot
+  onSnapshot,
+  getDoc
 } from '@lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -63,11 +64,12 @@ useEffect(() => {
 
         const friendDataPromises = allFriendsData.map(async (friend) => {
             try {
-                const q = query(collection(db, 'users'), where('uid', '==', friend.id));
-                const friendUserDocSnap = await getDocs(q);
+                // --- CAMBIO AQUÍ ---
+                const friendUserDocRef = doc(db, 'users', friend.id);
+                const friendUserDocSnap = await getDoc(friendUserDocRef);
 
-                if (!friendUserDocSnap.empty) {
-                    const friendUserData = friendUserDocSnap.docs[0].data();
+                if (friendUserDocSnap.exists()) {
+                    const friendUserData = friendUserDocSnap.data();
                     const friendDisplayName = friendUserData?.displayName || friendUserData?.email?.split('@')[0];
                     return { ...friend, displayName: friendDisplayName };
                 } else {

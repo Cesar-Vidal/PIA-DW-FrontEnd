@@ -34,6 +34,31 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+export const upsertUserDocument = async (user) => {
+  if (!user) return;
+
+  const userRef = doc(db, 'users', user.uid);
+
+  try {
+    // Usamos merge: true para no sobrescribir datos existentes si el usuario ya tiene un documento
+    await setDoc(userRef, {
+      uid: user.uid,
+      email: user.email,
+      // Usa el displayName de Firebase Auth, si no, toma la parte antes del @ del email, si no, "Usuario Desconocido"
+      displayName: user.displayName || user.email?.split('@')[0] || 'Usuario Desconocido',
+      photoURL: user.photoURL || null,
+      // Intenta usar el creationTime de Auth si está disponible, si no, usa serverTimestamp
+      createdAt: user.metadata.creationTime ? new Date(user.metadata.creationTime) : serverTimestamp(),
+      // Agrega la última hora de inicio de sesión
+      lastSignInTime: user.metadata.lastSignInTime ? new Date(user.metadata.lastSignInTime) : serverTimestamp(),
+    }, { merge: true });
+    console.log(`Documento de usuario actualizado/creado para UID: ${user.uid}`);
+  } catch (error) {
+    console.error("Error al actualizar/crear documento de usuario:", error);
+  }
+};
+
+
 export {
   auth,
   db,
