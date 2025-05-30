@@ -19,6 +19,7 @@ import { useChat } from '../context/ChatContext';
 
 export default function CreateChatPage() {
   const [chatName, setChatName] = useState('');
+  const [chatColor, setChatColor] = useState('#2563eb'); // Cambiado el valor por defecto para que coincida con el primer color de la lista
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
@@ -26,6 +27,25 @@ export default function CreateChatPage() {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const router = useRouter();
   const { setSelectedChatId } = useChat();
+
+  // Define los 14 colores predefinidos (2 filas de 7)
+  const predefinedColors = [
+    '#2563eb', // blue-600 (azul)
+    '#dc2626', // red-600 (rojo)
+    '#16a34a', // green-600 (verde)
+    '#eab308', // yellow-500 (amarillo)
+    '#9333ea', // purple-600 (púrpura)
+    '#ea580c', // orange-600 (naranja)
+    '#0ea5e9', // sky-500 (azul cielo)
+    '#f43f5e', // rose-500 (rosa fuerte)
+    '#be185d', // pink-700 (rosa oscuro)
+    '#7c2d12', // amber-800 (marrón-rojizo)
+    '#6d28d9', // violet-700 (violeta más oscuro)
+    '#0f766e', // teal-700 (verde azulado)
+    '#1e40af', // blue-800 (azul más oscuro)
+    '#a21caf', // fuchsia-700 (fucsia)
+  ];
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -48,9 +68,9 @@ export default function CreateChatPage() {
     const q = query(friendsCollectionRef);
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const friendIds = snapshot.docs
-            .filter(doc => doc.data().status === 'accepted')
-            .map(doc => doc.id);
+      const friendIds = snapshot.docs
+        .filter(doc => doc.data().status === 'accepted')
+        .map(doc => doc.id);
 
       const friendsDataPromises = friendIds.map(async (friendId) => {
         const userDocRef = doc(db, 'users', friendId);
@@ -101,6 +121,7 @@ export default function CreateChatPage() {
 
       const newChatRef = await addDoc(collection(db, 'chats'), {
         name: chatName,
+        color: chatColor, // Usamos el color seleccionado de los predefinidos
         createdAt: serverTimestamp(),
         createdBy: currentUser.uid,
         members: Array.from(new Set(initialMembersUids)),
@@ -115,7 +136,7 @@ export default function CreateChatPage() {
 
       console.log('Chat creado con ID: ', newChatRef.id);
       setSelectedChatId(newChatRef.id);
-      router.push('/home');
+      router.push('/home'); // Al crear un chat, te lleva a la vista de ese chat
     } catch (err) {
       console.error('Error creating chat:', err);
       setError('Error al crear el chat. Inténtalo de nuevo.');
@@ -149,6 +170,31 @@ export default function CreateChatPage() {
               className="w-full px-4 py-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-600"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-lg font-medium text-gray-700 mb-2 dark:text-gray-200">
+              Color del Chat:
+            </label>
+            {/* Ajusta la clase 'grid' para controlar el número de columnas */}
+            <div className="grid grid-cols-7 gap-3 p-2 border border-blue-300 rounded-lg dark:border-gray-600 bg-blue-50 dark:bg-gray-700">
+              {predefinedColors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setChatColor(color)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800`}
+                  style={{
+                    backgroundColor: color,
+                    borderColor: chatColor === color ? 'white' : 'transparent',
+                    boxShadow: chatColor === color ? '0 0 0 3px ' + color + ', 0 0 0 5px white' : 'none',
+                    outline: chatColor === color ? `3px solid ${color === '#ffffff' ? '#000000' : 'white'}` : 'none'
+                  }}
+                  title={color}
+                />
+              ))}
+            </div>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Color seleccionado: <span className="font-semibold" style={{ color: chatColor }}>{chatColor}</span></p>
           </div>
 
           <div>
@@ -192,10 +238,10 @@ export default function CreateChatPage() {
 
           <button
             type="button"
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/chats')}
             className="w-full bg-gray-300 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-400 transition duration-200 shadow-md dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:shadow-none"
           >
-            Volver a Inicio
+            Volver a Mis Chats
           </button>
         </form>
       </div>

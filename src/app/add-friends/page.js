@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from 'next/link'; // Asegúrate de que Link esté importado
 import {
   db,
   auth,
@@ -365,8 +365,8 @@ useEffect(() => {
           </div>
         </div>
 
-        <Link href="/home" className="block w-full text-center bg-gray-300 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-400 transition duration-200 shadow-md mt-6 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:shadow-none">
-          Volver al Chat Principal
+        <Link href="/chats" className="block w-full text-center bg-gray-300 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-400 transition duration-200 shadow-md mt-6 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:shadow-none">
+          Volver a Mis Chats
         </Link>
       </div>
     </div>

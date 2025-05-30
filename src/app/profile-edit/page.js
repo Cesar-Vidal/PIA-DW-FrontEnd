@@ -67,9 +67,9 @@ export default function ProfileEditPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-cyan-50 p-4 pt-20
-                    dark:from-gray-900 dark:to-gray-800"> 
+                   dark:from-gray-900 dark:to-gray-800"> 
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border border-blue-200
-                      dark:bg-gray-800 dark:border-gray-700">
+                     dark:bg-gray-800 dark:border-gray-700">
         <h2 className="text-3xl font-bold text-center text-blue-800 mb-6 dark:text-blue-400">Editar Perfil</h2> 
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -119,11 +119,11 @@ export default function ProfileEditPage() {
 
           <button
             type="button"
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/chats')}
             className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 shadow-md
                        dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100" 
           >
-            Volver a Inicio
+            Volver a Mis Chats
           </button>
 
         </form>

@@ -6,12 +6,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import ChatScreen from '../components/ChatScreen';
-// ELIMINAR: import HamburgerMenu from '../components/HamburgerMenu'; // Ya no se renderiza aquí
+
 
 export default function HomePage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  // ELIMINAR: const [selectedChatId, setSelectedChatId] = useState(null); // Ya no es necesario aquí
   const router = useRouter();
 
   useEffect(() => {

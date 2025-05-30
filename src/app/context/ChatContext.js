@@ -12,7 +12,8 @@ export function useChat() {
 
 export function ChatProvider({ children, currentUser }) {
   const [selectedChatId, setSelectedChatId] = useState(null);
-  const [selectedChatName, setSelectedChatName] = useState('Chat Global'); // Nuevo estado para el nombre del chat, con un valor por defecto
+  const [selectedChatName, setSelectedChatName] = useState('Chat Global');
+  const [selectedChatColor, setSelectedChatColor] = useState('#60a5fa'); // <-- NUEVO ESTADO para el color, con un valor por defecto
   const [userChats, setUserChats] = useState([]);
 
   // Efecto para obtener los chats del usuario
@@ -20,7 +21,8 @@ export function ChatProvider({ children, currentUser }) {
     if (!currentUser) {
       setUserChats([]);
       setSelectedChatId(null);
-      setSelectedChatName('Chat Global'); // Resetear nombre al cerrar sesión
+      setSelectedChatName('Chat Global');
+      setSelectedChatColor('#60a5fa'); // Resetear color al cerrar sesión
       return;
     }
 
@@ -36,14 +38,21 @@ export function ChatProvider({ children, currentUser }) {
       }));
       setUserChats(chats);
 
-      // Lógica para seleccionar el chat inicial
       if (chats.length > 0) {
-        // Si no hay chat seleccionado, o el chat seleccionado ya no existe/no es válido
-        if (!selectedChatId || !chats.some(chat => chat.id === selectedChatId)) {
-          setSelectedChatId(chats[0].id); // Selecciona el primer chat del usuario por defecto
+        let chatToSelect = chats.find(chat => chat.id === selectedChatId);
+
+        // Si el chat seleccionado ya no existe o no es válido, o no hay ninguno
+        if (!chatToSelect) {
+          chatToSelect = chats[0]; // Selecciona el primer chat del usuario por defecto
         }
+        
+        setSelectedChatId(chatToSelect.id);
+        setSelectedChatName(chatToSelect.name);
+        setSelectedChatColor(chatToSelect.color || '#60a5fa'); // Establecer el color del chat seleccionado
       } else {
         setSelectedChatId(null); // No hay chats de grupo para el usuario
+        setSelectedChatName('Selecciona un Chat');
+        setSelectedChatColor('#60a5fa');
       }
 
     }, (error) => {
@@ -51,28 +60,32 @@ export function ChatProvider({ children, currentUser }) {
     });
 
     return () => unsubscribe();
-  }, [currentUser, selectedChatId]); // selectedChatId se mantiene como dependencia para re-evaluar si el seleccionado desaparece
+  }, [currentUser]); // Removido selectedChatId de las dependencias, ya se maneja internamente.
 
-  // NUEVO Efecto para actualizar el nombre del chat cuando selectedChatId cambia
+  // Efecto para actualizar el nombre y color del chat cuando selectedChatId cambia
+  // Este efecto es más robusto si ya tenemos los chats en userChats
   useEffect(() => {
-    if (selectedChatId) {
+    if (selectedChatId && userChats.length > 0) {
       const chat = userChats.find(c => c.id === selectedChatId);
       if (chat) {
         setSelectedChatName(chat.name);
-      } else if (selectedChatId === 'global-chat') { // Si tienes un ID específico para el chat global
-        setSelectedChatName('Chat Global');
+        setSelectedChatColor(chat.color || '#60a5fa'); // Asegura que el color se actualice
       } else {
-        setSelectedChatName('Cargando Chat...'); // O un nombre genérico
+        // Esto podría ocurrir si selectedChatId es un chat que no está en userChats (ej. un chat eliminado)
+        setSelectedChatName('Chat no encontrado');
+        setSelectedChatColor('#60a5fa');
       }
-    } else {
-      setSelectedChatName('Selecciona un Chat'); // Mensaje cuando no hay chat seleccionado
+    } else if (!selectedChatId) {
+      setSelectedChatName('Selecciona un Chat');
+      setSelectedChatColor('#60a5fa');
     }
   }, [selectedChatId, userChats]); // Depende de selectedChatId y userChats
 
   const value = {
     selectedChatId,
     setSelectedChatId,
-    selectedChatName, // Exporta el nombre del chat
+    selectedChatName,
+    selectedChatColor, // <-- Exporta el color del chat
     userChats,
   };
 
